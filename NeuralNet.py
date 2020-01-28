@@ -40,10 +40,59 @@ class NeuralNet:
             print("Expected training labels of length",len(self.layers[len(self.layers)-1]))
             return
 
+    def loadParams(self, filename):
+        file = open(filename,"r")
+        fileStr = file.readline()
+        strArr = fileStr.split(" ")
+        floatArr = []
+
+        for string in strArr:
+            if(len(string) != 0):
+                floatArr.append(float(string))
+        
+
+
+        arr = floatArr
+
+        cnt = 0
+
+        for layer in self.layers:
+            for node in layer:
+                node.bias = arr[cnt]
+                cnt += 1
+
+        for layer in self.layers:
+            for node in layer:
+                for edge in node.outputs:
+                    edge.weight = arr[cnt]
+                    cnt += 1
+
+
+
+    def saveParams(self, filename):
+        file = open(filename,"w")
+        for layer in self.layers:
+            for node in layer:
+                file.write(str(node.bias) + " ")
+
+        for layer in self.layers:
+            for node in layer:
+                for edge in node.outputs:
+                    file.write(str(edge.weight) + " ")
+
+
+
+    def wiggle(self, amount=0.1):
+        for layer in self.layers:
+            for node in layer:
+                node.bias += random.random() * amount
+                for outputEdge in node.outputs:
+                    outputEdge.weight += random.random() * amount
+
 
         
 
-    def predit(self, input_values):
+    def predict(self, input_values):
         input_layer = self.layers[0]
 
         for i,t_node in enumerate(input_values):
@@ -83,11 +132,5 @@ class Node:
         pass
         return 0.0
 
-
-a = NeuralNet([2,3,1],[tanh,tanh,tanh])
-
-l = a.predit([1,2])
-
-print(2)
 
 
